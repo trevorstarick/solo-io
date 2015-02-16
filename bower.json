@@ -1,0 +1,16 @@
+{
+  "name": "solo-io",
+  "version": "1.0.0",
+  "authors": [
+    "Trevor Starick <trevor.starick@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

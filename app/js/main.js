@@ -1,59 +1,35 @@
-var i = 0;
-var delay = 0;
-var rootTime = 0;
-
-var block = [];
-var blockprime = [];
-
-var prime = false;
-var playing = false;
-
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var ctx = new AudioContext();
 
-var client = new BinaryClient('ws://localhost:9000');
+var socket = io('localhost:8080');
 
-client.on('stream', function(stream, meta) {
+function echo(d) {
+  console.log(d)
+}
 
-  stream.on('data', function(data) {
-    if (prime) {
-      blockprime.push(data);
-      prime = false;
-    } else {
-      block.push(data);
-      prime = true;
-    }
-    if(!playing) {
-      playback(0, 0);
-      playing = true;
-    }
-  });
+function play(raw) {
+  ctx.decodeAudioData(raw, function(data) {
+    var source = ctx.createBufferSource();
+    source.buffer = data;
+    console.log(data);
+    source.connect(ctx.destination);
+    source.start(delay);
+    delay += data.duration;
+  })
+}
 
+var buffer = [];
+var delay = 0;
+
+socket.on('start', echo);
+socket.on('packet', function(packet) {
+  buffer.push(packet);
+  play(packet);
 });
 
-
-function playback(i, timeout) {
-  console.log('+', i, timeout);
-  setTimeout(function() {
-    ctx.decodeAudioData(block[i], function(data) {
-      source = ctx.createBufferSource();
-      source.connect(ctx.destination);
-      source.buffer = data;
-      source.start(0);
-      playbackprime(i, data.duration);
-    });
-  }, timeout * 988);
-}
-
-function playbackprime(i, timeout) {
-  console.log('-', i, timeout);
-  setTimeout(function() {
-    ctx.decodeAudioData(blockprime[i], function(data) {
-      source = ctx.createBufferSource();
-      source.connect(ctx.destination);
-      source.buffer = data;
-      source.start(0);
-      playback(i + 1, data.duration);
-    });
-  }, timeout * 988);
-}
+socket.on('end', function() {
+  async.eachSeries(buffer, function(v, cb) {
+    console.log(v);
+    play(v);
+  })
+});

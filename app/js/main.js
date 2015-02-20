@@ -1,35 +1,52 @@
-var AudioContext = window.AudioContext || window.webkitAudioContext;
-var ctx = new AudioContext();
+'use strict';
 
-var socket = io('localhost:8080');
+// Create an instance
+var wavesurfer = Object.create(WaveSurfer);
 
-function echo(d) {
-  console.log(d)
-}
+// Init & load audio file
+document.addEventListener('DOMContentLoaded', function () {
+    var options = {
+        container     : document.querySelector('#waveform'),
+        waveColor     : 'violet',
+        progressColor : 'purple',
+        loaderColor   : 'purple',
+        cursorColor   : 'navy'
+    };
 
-function play(raw) {
-  ctx.decodeAudioData(raw, function(data) {
-    var source = ctx.createBufferSource();
-    source.buffer = data;
-    console.log(data);
-    source.connect(ctx.destination);
-    source.start(delay);
-    delay += data.duration;
-  })
-}
+    if (location.search.match('scroll')) {
+        options.minPxPerSec = 100;
+        options.scrollParent = true;
+    }
 
-var buffer = [];
-var delay = 0;
+    if (location.search.match('normalize')) {
+        options.normalize = true;
+    }
 
-socket.on('start', echo);
-socket.on('packet', function(packet) {
-  buffer.push(packet);
-  play(packet);
+    // Init
+    wavesurfer.init(options);
+    // Load audio from URL
+    wavesurfer.load('/audio/02_Ghosts_I_320kb.mp3');
+
+    // Regions
+    if (wavesurfer.enableDragSelection) {
+        wavesurfer.enableDragSelection({
+            color: 'rgba(0, 255, 0, 0.1)'
+        });
+    }
 });
 
-socket.on('end', function() {
-  async.eachSeries(buffer, function(v, cb) {
-    console.log(v);
-    play(v);
-  })
+// Play at once when ready
+// Won't work on iOS until you touch the page
+wavesurfer.on('ready', function () {
+    //wavesurfer.play();
+});
+
+// Report errors
+wavesurfer.on('error', function (err) {
+    console.error(err);
+});
+
+// Do something when the clip is over
+wavesurfer.on('finish', function () {
+    console.log('Finished playing');
 });

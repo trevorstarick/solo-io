@@ -19,6 +19,8 @@
   "dependencies": {
     "binaryjs": "^0.2.1",
     "express": "^4.11.2",
+    "express-hbs": "^0.8.1",
+    "lodash": "^3.2.0",
     "wav": "^0.1.2"
   }
 }

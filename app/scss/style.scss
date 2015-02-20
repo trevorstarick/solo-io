@@ -1,0 +1,61 @@
+$mastheadHeight: 80px;
+$topbarHeight: 10px;
+
+$albumArtDimsStatic: 180px;
+$albumArtDimsVariable: 20vw;
+
+html, body {
+  background: #F00;
+}
+
+.masthead {
+  background: #fff;
+  margin-top: $topbarHeight;
+  height: $mastheadHeight;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.23), 0px 3px 10px rgba(0, 0, 0, 0.16);
+}
+
+.masthead>h1 {
+  margin: 0;
+  line-height: $mastheadHeight;
+  padding-left: 10px;
+  font-size: 60px;
+}
+
+section.main {
+  padding-top: 20px;
+  background: #eee;
+  min-height: calc(100vh - #{$mastheadHeight} - #{$topbarHeight}); /* 100% - masthead - top bar */
+}
+
+.main-container {
+  /* background: #000; */
+}
+
+.title h3,h6 {
+  display: inline-block;
+}
+
+.album-art, .audio-histogram {
+  max-height: $albumArtDimsStatic;
+  height: 5vw;
+  float: left;
+  margin-bottom: 40px;
+}
+
+.album-art {
+  max-height:  $albumArtDimsStatic;
+  max-width:  $albumArtDimsStatic;
+  height: $albumArtDimsVariable;
+  width: $albumArtDimsVariable;
+  background-position: center;
+  background-size: cover;
+}
+
+.audio-histogram {
+  background: #fff;
+  max-height:  $albumArtDimsStatic;
+  height: $albumArtDimsVariable;
+  min-width: calc(100% - #{$albumArtDimsStatic});
+  width: calc(100% - #{$albumArtDimsVariable});
+}
